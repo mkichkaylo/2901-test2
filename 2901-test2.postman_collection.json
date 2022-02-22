@@ -17,7 +17,7 @@
 								"exec": [
 									"pm.environment.set(\"user_id\", _.random(1000));\r",
 									"\r",
-									"\r",
+									"pm.environment.set(\"user_name\", 'a' + _.random(100000));\r",
 									""
 								],
 								"type": "text/javascript"
@@ -36,7 +36,10 @@
 									"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"{{user_id}}\"));\r",
 									"});\r",
 									"\r",
-									""
+									"var jsonData = pm.response.json();\r",
+									"pm.test(\"Response user name the same as in environment\", function () {\r",
+									"    pm.expect(jsonData.name).to.eql(pm.environment.get(\"{{user_name}}\"));\r",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -47,7 +50,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"id\": {{user_id}},\r\n  \"username\": \"bondik\",\r\n  \"firstName\": \"james\",\r\n  \"lastName\": \"bond\",\r\n  \"email\": \"agent007@mail.ru\",\r\n  \"password\": \"7654321\",\r\n  \"phone\": \"1234567\",\r\n  \"userStatus\": 0\r\n}",
+							"raw": "{\r\n  \"id\": {{user_id}},\r\n  \"username\": \"{{user_name}}\",\r\n  \"firstName\": \"james\",\r\n  \"lastName\": \"bond\",\r\n  \"email\": \"agent007@mail.ru\",\r\n  \"password\": \"7654321\",\r\n  \"phone\": \"1234567\",\r\n  \"userStatus\": 0\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -99,7 +102,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://petstore.swagger.io/v2/user/bondik",
+							"raw": "https://petstore.swagger.io/v2/user/{{user_name}}",
 							"protocol": "https",
 							"host": [
 								"petstore",
@@ -109,7 +112,7 @@
 							"path": [
 								"v2",
 								"user",
-								"bondik"
+								"{{user_name}}"
 							]
 						}
 					},
@@ -124,7 +127,7 @@
 								"exec": [
 									"pm.environment.set(\"user_id\", _.random(1000));\r",
 									"\r",
-									"var username = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+									"var firstname = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
 									"\r",
 									"var firstname = pm.variables.replaceIn(\"{{$randomFirstName}}\");\r",
 									"\r",
@@ -166,7 +169,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"id\": {{user_id}},\r\n  \"username\": \"{{user_name}}\",\r\n  \"firstName\": \"{{user_firstname}}\",\r\n  \"lastName\": \"{{user_lastname}}\",\r\n  \"email\": \"{{user_email}}\",\r\n  \"password\": \"{{user_password}}\",\r\n  \"phone\": \"{{user_phone}}\",\r\n  \"userStatus\": 0\r\n}",
+							"raw": "{\r\n  \"id\": {{user_id}},\r\n  \"username\": \"{{$randomUserName}}\",\r\n  \"firstName\": \"{{$randomFirstName}}\",\r\n  \"lastName\": \"{{$randomLastName}}\",\r\n  \"email\": \"{{$randomEmail}}\",\r\n  \"password\": {{user_password}},\r\n  \"phone\": {{user_phone}},\r\n  \"userStatus\": 0\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -209,7 +212,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://petstore.swagger.io/v2/user/login?username={{user_name}}&password={{user_password}}",
+							"raw": "https://petstore.swagger.io/v2/user/login",
 							"protocol": "https",
 							"host": [
 								"petstore",
@@ -220,16 +223,6 @@
 								"v2",
 								"user",
 								"login"
-							],
-							"query": [
-								{
-									"key": "username",
-									"value": "{{user_name}}"
-								},
-								{
-									"key": "password",
-									"value": "{{user_password}}"
-								}
 							]
 						}
 					},
@@ -277,8 +270,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -306,6 +299,26 @@
 					"response": []
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
